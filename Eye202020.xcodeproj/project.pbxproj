@@ -26,6 +26,8 @@
 		A018 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C018 /* SettingsView.swift */; };
 		A019 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C019 /* StatisticsView.swift */; };
 		A020 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C020 /* Assets.xcassets */; };
+		A021 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C027 /* Localizable.strings */; };
+		A022 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C024 /* Localization.swift */; };
 		B001 /* ReminderEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C021 /* ReminderEngineTests.swift */; };
 		B002 /* PersistenceStoresTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C022 /* PersistenceStoresTests.swift */; };
 		B003 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C023 /* AppModelTests.swift */; };
@@ -65,6 +67,9 @@
 		C021 /* ReminderEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEngineTests.swift; sourceTree = "<group>"; };
 		C022 /* PersistenceStoresTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceStoresTests.swift; sourceTree = "<group>"; };
 		C023 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
+		C024 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		C025 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C026 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C100 /* EyeBreak 20-20-20.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EyeBreak 20-20-20.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C101 /* Eye202020Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Eye202020Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -88,7 +93,7 @@
 		};
 		G002 /* App */ = {
 			isa = PBXGroup;
-			children = (C001, C002, C003, C004, C005);
+			children = (C001, C002, C003, C004, C005, C024);
 			path = App;
 			sourceTree = "<group>";
 		};
@@ -113,7 +118,7 @@
 		G006 /* About */ = {isa = PBXGroup; children = (C014); path = About; sourceTree = "<group>"; };
 		G007 /* MenuBar */ = {isa = PBXGroup; children = (C015); path = MenuBar; sourceTree = "<group>"; };
 		G008 /* Overview */ = {isa = PBXGroup; children = (C016); path = Overview; sourceTree = "<group>"; };
-		G009 /* Resources */ = {isa = PBXGroup; children = (C020); path = Resources; sourceTree = "<group>"; };
+		G009 /* Resources */ = {isa = PBXGroup; children = (C020, C027); path = Resources; sourceTree = "<group>"; };
 		G010 /* Eye202020Tests */ = {isa = PBXGroup; children = (C021, C022, C023); path = Eye202020Tests; sourceTree = "<group>"; };
 		G011 /* Products */ = {isa = PBXGroup; children = (C100, C101); name = Products; sourceTree = "<group>"; };
 		G012 /* Rest */ = {isa = PBXGroup; children = (C017); path = Rest; sourceTree = "<group>"; };
@@ -160,7 +165,7 @@
 			};
 			buildConfigurationList = L001 /* Build configuration list for PBXProject "Eye202020" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = zh-Hans;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (Base, "zh-Hans", en);
 			mainGroup = G000;
@@ -172,7 +177,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		R001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A020 /* Assets.xcassets in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+		R001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A020 /* Assets.xcassets in Resources */, A021 /* Localizable.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 		R002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
@@ -180,7 +185,7 @@
 		S001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (A001, A002, A003, A004, A005, A006, A007, A008, A009, A010, A011, A012, A013, A014, A015, A016, A017, A018, A019);
+			files = (A001, A002, A003, A004, A005, A006, A007, A008, A009, A010, A011, A012, A013, A014, A015, A016, A017, A018, A019, A022);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		S002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B001, B002, B003); runOnlyForDeploymentPostprocessing = 0; };
@@ -189,6 +194,15 @@
 /* Begin PBXTargetDependency section */
 		B101 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = T001 /* Eye202020 */; targetProxy = B100 /* PBXContainerItemProxy */; };
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C027 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (C025 /* en */, C026 /* zh-Hans */);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D001 /* Debug */ = {

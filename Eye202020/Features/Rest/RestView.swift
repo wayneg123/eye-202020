@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RestView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var localization: LocalizationManager
 
     var body: some View {
         ZStack {
@@ -32,7 +33,7 @@ struct RestView: View {
                             .background(.ultraThinMaterial, in: Circle())
                     }
                     .buttonStyle(.plain)
-                    .help("提前结束")
+                    .help(L10n.text("End early"))
 
                     Spacer()
                 }
@@ -49,28 +50,34 @@ struct RestView: View {
                     }
                     .frame(width: 82, height: 82)
 
-                    Text("休息一下，放松眼睛")
+                    Text(L10n.text("Take a break and relax your eyes"))
                         .font(.system(size: 23, weight: .semibold))
-                    Text("请看向 \(model.settings.lookDistanceFeet) 英尺（约 \(model.settings.lookDistanceMeters, specifier: "%.1f") 米）以外的地方")
+                    Text(L10n.format(
+                        "Look at something at least %1$d feet (about %2$.1f meters) away",
+                        model.settings.lookDistanceFeet,
+                        model.settings.lookDistanceMeters
+                    ))
                         .font(.system(size: 14))
                         .foregroundStyle(.secondary)
 
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text("\(model.remainingSeconds)")
-                            .font(.system(size: 44, weight: .semibold, design: .rounded))
-                            .monospacedDigit()
-                        Text("秒")
-                            .font(.subheadline.weight(.medium))
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                            Text("\(model.remainingSeconds)")
+                                .font(.system(size: 44, weight: .semibold, design: .rounded))
+                                .monospacedDigit()
+                            Text(L10n.text("seconds"))
+                                .font(.subheadline.weight(.medium))
+                        }
                     }
                     .padding(.top, 5)
 
                     HStack(spacing: 12) {
-                        Button("5 分钟后提醒") {
+                        Button(L10n.text("Remind me in 5 minutes")) {
                             model.snoozeRest()
                         }
                         .buttonStyle(.bordered)
 
-                        Button("提前结束") {
+                        Button(L10n.text("End early")) {
                             model.endRestEarly()
                         }
                         .buttonStyle(.borderedProminent)
@@ -88,6 +95,7 @@ struct RestView: View {
         }
         .frame(width: 640, height: 420)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("护眼休息倒计时")
+        .accessibilityLabel(L10n.text("Eye break countdown"))
+        .environment(\.locale, localization.locale)
     }
 }

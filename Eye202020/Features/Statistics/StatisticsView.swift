@@ -8,40 +8,40 @@ struct StatisticsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("统计")
+                    Text(L10n.text("Statistics"))
                         .font(.system(size: 26, weight: .bold))
-                    Text("每一次眺望远方，都是给眼睛的小假期。")
+                    Text(L10n.text("Every glance into the distance is a little vacation for your eyes."))
                         .foregroundStyle(.secondary)
                 }
 
                 HStack(spacing: 14) {
-                    SummaryTile(title: "今日完成", value: "\(model.today.completed) 次", icon: "checkmark.circle.fill", color: .eyeGreen)
-                    SummaryTile(title: "今日跳过", value: "\(model.today.skipped) 次", icon: "forward.end.fill", color: .orange)
-                    SummaryTile(title: "连续记录", value: "\(model.streak) 天", icon: "flame.fill", color: .red)
+                    SummaryTile(title: L10n.text("Completed today"), value: L10n.format("%d times", model.today.completed), icon: "checkmark.circle.fill", color: .eyeGreen)
+                    SummaryTile(title: L10n.text("Skipped today"), value: L10n.format("%d times", model.today.skipped), icon: "forward.end.fill", color: .orange)
+                    SummaryTile(title: L10n.text("Current streak"), value: L10n.format("%d days", model.streak), icon: "flame.fill", color: .red)
                 }
 
                 VStack(alignment: .leading, spacing: 18) {
-                    Text("最近 7 天")
+                    Text(L10n.text("Last 7 days"))
                         .font(.headline)
 
                     Chart(model.recentStatistics) { item in
                         BarMark(
-                            x: .value("日期", item.shortDateLabel),
-                            y: .value("完成", item.completed)
+                            x: .value(L10n.text("Date"), item.shortDateLabel),
+                            y: .value(L10n.text("Completed"), item.completed)
                         )
                         .foregroundStyle(Color.eyeGreen.gradient)
                         .cornerRadius(5)
 
                         BarMark(
-                            x: .value("日期", item.shortDateLabel),
-                            y: .value("跳过", item.skipped)
+                            x: .value(L10n.text("Date"), item.shortDateLabel),
+                            y: .value(L10n.text("Skipped"), item.skipped)
                         )
                         .foregroundStyle(Color.orange.opacity(0.58))
                         .cornerRadius(5)
                     }
                     .chartForegroundStyleScale([
-                        "完成": Color.eyeGreen,
-                        "跳过": Color.orange.opacity(0.58)
+                        L10n.text("Completed"): Color.eyeGreen,
+                        L10n.text("Skipped"): Color.orange.opacity(0.58)
                     ])
                     .chartYAxis {
                         AxisMarks(position: .leading, values: .automatic(desiredCount: 4))
@@ -52,7 +52,7 @@ struct StatisticsView: View {
                 .eyeCard()
 
                 HStack {
-                    Label("绿色代表完整完成休息，橙色代表提前结束或跳过。", systemImage: "info.circle")
+                    Label(L10n.text("Green represents completed breaks; orange represents breaks ended early or skipped."), systemImage: "info.circle")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()

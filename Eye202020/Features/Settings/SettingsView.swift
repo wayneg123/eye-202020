@@ -3,55 +3,56 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var localization: LocalizationManager
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("设置")
+                    Text(L10n.text("Settings"))
                         .font(.system(size: 26, weight: .bold))
-                    Text("调整适合你的工作与休息节奏。")
+                    Text(L10n.text("Adjust the work and rest rhythm that suits you."))
                         .foregroundStyle(.secondary)
                 }
 
-                settingsGroup("20 20 20 规则", icon: "timer") {
+                settingsGroup(L10n.text("20-20-20 rule"), icon: "timer") {
                     StepperRow(
-                        title: "工作时长",
-                        detail: "两次休息之间的专注时间",
+                        title: L10n.text("Work duration"),
+                        detail: L10n.text("Focus time between breaks"),
                         value: Binding(
                             get: { model.settings.workMinutes },
                             set: { value in model.updateSettings { $0.workMinutes = value } }
                         ),
                         range: 1...120,
-                        suffix: "分钟"
+                        suffix: L10n.text("min")
                     )
                     Divider()
                     StepperRow(
-                        title: "观察距离",
-                        detail: "提醒时建议眺望的最短距离",
+                        title: L10n.text("Viewing distance"),
+                        detail: L10n.text("Minimum suggested distance to look at during a break"),
                         value: Binding(
                             get: { model.settings.lookDistanceFeet },
                             set: { value in model.updateSettings { $0.lookDistanceFeet = value } }
                         ),
                         range: 5...100,
-                        suffix: "英尺"
+                        suffix: L10n.text("ft")
                     )
                     Divider()
                     StepperRow(
-                        title: "休息时长",
-                        detail: "每次眺望远方的倒计时",
+                        title: L10n.text("Break duration"),
+                        detail: L10n.text("Countdown for each distance-viewing break"),
                         value: Binding(
                             get: { model.settings.restSeconds },
                             set: { value in model.updateSettings { $0.restSeconds = value } }
                         ),
                         range: 5...120,
-                        suffix: "秒"
+                        suffix: L10n.text("sec")
                     )
                 }
 
-                settingsGroup("提醒与系统", icon: "bell") {
+                settingsGroup(L10n.text("Reminders and system"), icon: "bell") {
                     ToggleRow(
-                        title: "通知声音",
+                        title: L10n.text("Notification sound"),
                         detail: model.notificationPermissionLabel,
                         isOn: Binding(
                             get: { model.settings.notificationSoundEnabled },
@@ -60,8 +61,8 @@ struct SettingsView: View {
                     )
                     Divider()
                     ToggleRow(
-                        title: "开机时启动",
-                        detail: "登录 Mac 后自动开始护眼计时",
+                        title: L10n.text("Launch at login"),
+                        detail: L10n.text("Start the eye-care timer automatically after logging in to your Mac"),
                         isOn: Binding(
                             get: { model.settings.launchAtLogin },
                             set: model.setLaunchAtLogin
@@ -70,11 +71,11 @@ struct SettingsView: View {
                 }
 
                 HStack {
-                    Button("恢复默认设置") {
+                    Button(L10n.text("Restore defaults")) {
                         model.restoreDefaultSettings()
                     }
                     Spacer()
-                    Button("打开系统通知设置") {
+                    Button(L10n.text("Open system notification settings")) {
                         guard let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") else { return }
                         NSWorkspace.shared.open(url)
                     }

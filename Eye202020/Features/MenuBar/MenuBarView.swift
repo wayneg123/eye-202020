@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MenuBarView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var localization: LocalizationManager
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -18,7 +19,7 @@ struct MenuBarView: View {
                     Image(systemName: "gearshape")
                 }
                 .buttonStyle(.plain)
-                .help("打开应用")
+                .help(L10n.text("Open app"))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -26,30 +27,32 @@ struct MenuBarView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 14) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(model.phase.title)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Text(model.formattedRemainingTime)
-                            .font(.system(size: 29, weight: .semibold, design: .rounded))
-                            .foregroundStyle(Color.eyeGreen)
-                            .monospacedDigit()
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(model.phase.title)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text(model.formattedRemainingTime)
+                                .font(.system(size: 29, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color.eyeGreen)
+                                .monospacedDigit()
+                        }
+                        Spacer()
+                        ZStack {
+                            ProgressRing(progress: model.progress, lineWidth: 5)
+                            Image(systemName: model.phase.isResting ? "eye.slash" : "cup.and.saucer.fill")
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.eyeGreenDark)
+                        }
+                        .frame(width: 55, height: 55)
                     }
-                    Spacer()
-                    ZStack {
-                        ProgressRing(progress: model.progress, lineWidth: 5)
-                        Image(systemName: model.phase.isResting ? "eye.slash" : "cup.and.saucer.fill")
-                            .font(.system(size: 15))
-                            .foregroundStyle(Color.eyeGreenDark)
-                    }
-                    .frame(width: 55, height: 55)
                 }
 
                 Button {
                     model.startRestNow()
                 } label: {
-                    Text(model.phase.isResting ? "返回休息" : "开始休息")
+                    Text(model.phase.isResting ? L10n.text("Return to break") : L10n.text("Start a break"))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -62,7 +65,7 @@ struct MenuBarView: View {
                     HStack {
                         Image(systemName: "checkmark.circle")
                             .foregroundStyle(Color.eyeGreen)
-                        Text("今日完成 \(model.today.completed) 次")
+                        Text(L10n.format("Completed %d times today", model.today.completed))
                         Spacer()
                         Image(systemName: "chevron.right")
                             .foregroundStyle(.tertiary)
@@ -79,11 +82,11 @@ struct MenuBarView: View {
             Divider()
 
             HStack(spacing: 0) {
-                Button("打开应用") { openMainWindow() }
+                Button(L10n.text("Open app")) { openMainWindow() }
                     .buttonStyle(.plain)
                     .frame(maxWidth: .infinity)
                 Divider().frame(height: 19)
-                Button("退出") { NSApplication.shared.terminate(nil) }
+                Button(L10n.text("Quit")) { NSApplication.shared.terminate(nil) }
                     .buttonStyle(.plain)
                     .frame(maxWidth: .infinity)
             }

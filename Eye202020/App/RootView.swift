@@ -1,12 +1,21 @@
 import SwiftUI
 
-private enum AppSection: String, CaseIterable, Identifiable {
-    case overview = "概览"
-    case statistics = "统计"
-    case settings = "设置"
-    case about = "关于"
+private enum AppSection: CaseIterable, Identifiable {
+    case overview
+    case statistics
+    case settings
+    case about
 
-    var id: String { rawValue }
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .overview: return L10n.text("Overview")
+        case .statistics: return L10n.text("Statistics")
+        case .settings: return L10n.text("Settings")
+        case .about: return L10n.text("About")
+        }
+    }
 
     var icon: String {
         switch self {
@@ -20,6 +29,7 @@ private enum AppSection: String, CaseIterable, Identifiable {
 
 struct RootView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var localization: LocalizationManager
     @State private var selection: AppSection = .overview
 
     var body: some View {
@@ -52,7 +62,7 @@ struct RootView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("EyeBreak 20-20-20")
                         .font(.headline)
-                    Text("好习惯，亮眼睛")
+                    Text(L10n.text("Healthy habits, brighter eyes"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -70,7 +80,7 @@ struct RootView: View {
                             Image(systemName: section.icon)
                                 .font(.system(size: 17, weight: .medium))
                                 .frame(width: 22)
-                            Text(section.rawValue)
+                            Text(section.title)
                                 .font(.system(size: 15, weight: .medium))
                             Spacer()
                         }
@@ -94,7 +104,7 @@ struct RootView: View {
                 Image(systemName: "quote.opening")
                     .font(.title2)
                     .foregroundStyle(Color.eyeGreen.opacity(0.55))
-                Text("你的眼睛值得\n每 20 分钟的关心。")
+                Text(L10n.text("Your eyes deserve care\nevery 20 minutes."))
                     .font(.system(size: 14))
                     .foregroundStyle(.secondary)
                     .lineSpacing(5)
@@ -104,8 +114,20 @@ struct RootView: View {
 
             Divider().opacity(0.45)
 
+            Button {
+                localization.toggleLanguage()
+            } label: {
+                Label("中/En", systemImage: "globe")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .help(L10n.text("Switch language"))
+            .accessibilityLabel(L10n.text("Switch language"))
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+
             Toggle(
-                "开机时启动",
+                L10n.text("Launch at login"),
                 isOn: Binding(
                     get: { model.settings.launchAtLogin },
                     set: model.setLaunchAtLogin

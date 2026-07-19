@@ -15,7 +15,10 @@ struct DailyStatistics: Codable, Equatable, Identifiable {
 
     var shortDateLabel: String {
         guard let date = Self.keyFormatter.date(from: dateKey) else { return dateKey }
-        return Self.shortFormatter.string(from: date)
+        let formatter = DateFormatter()
+        formatter.locale = LocalizationManager.shared.locale
+        formatter.setLocalizedDateFormatFromTemplate("Md")
+        return formatter.string(from: date)
     }
 
     static func key(for date: Date, calendar: Calendar = .current) -> String {
@@ -31,10 +34,4 @@ struct DailyStatistics: Codable, Equatable, Identifiable {
         return formatter
     }()
 
-    private static let shortFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_Hans_CN")
-        formatter.dateFormat = "M/d"
-        return formatter
-    }()
 }

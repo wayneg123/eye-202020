@@ -18,9 +18,15 @@ struct OverviewView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text("20 20 20 原则")
+            Text(L10n.text("The 20-20-20 rule"))
                 .font(.system(size: 26, weight: .bold))
-            Text("每 \(model.settings.workMinutes) 分钟，看向 \(model.settings.lookDistanceFeet) 英尺（约 \(model.settings.lookDistanceMeters, specifier: "%.1f") 米）以外的地方，持续 \(model.settings.restSeconds) 秒，放松眼睛。")
+            Text(L10n.format(
+                "Every %1$d minutes, look at something at least %2$d feet (about %3$.1f meters) away for %4$d seconds to relax your eyes.",
+                model.settings.workMinutes,
+                model.settings.lookDistanceFeet,
+                model.settings.lookDistanceMeters,
+                model.settings.restSeconds
+            ))
                 .font(.system(size: 15))
                 .foregroundStyle(.secondary)
         }
@@ -28,19 +34,21 @@ struct OverviewView: View {
 
     private var principleSection: some View {
         HStack(spacing: 30) {
-            ZStack {
-                ProgressRing(progress: model.progress, lineWidth: 12)
-                VStack(spacing: 9) {
-                    Text(model.phase.title)
-                        .font(.system(size: 15))
-                        .foregroundStyle(.secondary)
-                    Text(model.formattedRemainingTime)
-                        .font(.system(size: 45, weight: .semibold, design: .rounded))
-                        .monospacedDigit()
-                    if case .focusing = model.phase {
-                        Button("跳过本次") { model.skipCurrent() }
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                ZStack {
+                    ProgressRing(progress: model.progress, lineWidth: 12)
+                    VStack(spacing: 9) {
+                        Text(model.phase.title)
+                            .font(.system(size: 15))
+                            .foregroundStyle(.secondary)
+                        Text(model.formattedRemainingTime)
+                            .font(.system(size: 45, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                        if case .focusing = model.phase {
+                            Button(L10n.text("Skip this break")) { model.skipCurrent() }
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+                        }
                     }
                 }
             }
@@ -49,24 +57,24 @@ struct OverviewView: View {
             VStack(alignment: .leading, spacing: 24) {
                 PrincipleRow(
                     icon: "clock",
-                    title: "\(model.settings.workMinutes) 分钟",
-                    subtitle: "专注工作"
+                    title: L10n.format("%d minutes", model.settings.workMinutes),
+                    subtitle: L10n.text("Focused work")
                 )
                 PrincipleRow(
                     icon: "mountain.2.fill",
-                    title: "\(model.settings.lookDistanceFeet) 英尺",
-                    subtitle: "看向远方"
+                    title: L10n.format("%d feet", model.settings.lookDistanceFeet),
+                    subtitle: L10n.text("Look into the distance")
                 )
                 PrincipleRow(
                     icon: "eye.slash",
-                    title: "\(model.settings.restSeconds) 秒",
-                    subtitle: "放松眼睛"
+                    title: L10n.format("%d seconds", model.settings.restSeconds),
+                    subtitle: L10n.text("Relax your eyes")
                 )
 
                 Button {
                     model.startRestNow()
                 } label: {
-                    Label("立即休息", systemImage: "cup.and.saucer.fill")
+                    Label(L10n.text("Take a break now"), systemImage: "cup.and.saucer.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -79,14 +87,14 @@ struct OverviewView: View {
 
     private var todaySection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("今日统计")
+            Text(L10n.text("Today's statistics"))
                 .font(.headline)
 
             HStack(spacing: 12) {
-                StatCard(icon: "checkmark.circle", color: .eyeGreen, value: "\(model.today.completed)", label: "完成次数")
-                StatCard(icon: "clock", color: .indigo, value: model.todayFocusDuration, label: "专注时长")
-                StatCard(icon: "chart.line.uptrend.xyaxis", color: .eyeGreen, value: model.today.completionRate.formatted(.percent.precision(.fractionLength(0))), label: "完成率")
-                StatCard(icon: "flame", color: .orange, value: "\(model.streak)", label: "连续天数")
+                StatCard(icon: "checkmark.circle", color: .eyeGreen, value: "\(model.today.completed)", label: L10n.text("Completed"))
+                StatCard(icon: "clock", color: .indigo, value: model.todayFocusDuration, label: L10n.text("Focus time"))
+                StatCard(icon: "chart.line.uptrend.xyaxis", color: .eyeGreen, value: model.today.completionRate.formatted(.percent.precision(.fractionLength(0))), label: L10n.text("Completion rate"))
+                StatCard(icon: "flame", color: .orange, value: "\(model.streak)", label: L10n.text("Day streak"))
             }
         }
         .padding(18)
@@ -99,9 +107,9 @@ struct OverviewView: View {
                 .font(.title2)
                 .foregroundStyle(.yellow)
             VStack(alignment: .leading, spacing: 3) {
-                Text("小贴士")
+                Text(L10n.text("Tip"))
                     .font(.subheadline.weight(.semibold))
-                Text("眨眨眼也能帮助眼睛保持湿润和放松哦 👀")
+                Text(L10n.text("Blinking also helps keep your eyes moist and relaxed 👀"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

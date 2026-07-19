@@ -26,8 +26,8 @@ final class NotificationService: NSObject, ReminderNotificationServing, UNUserNo
 
     func sendRestReminder(soundEnabled: Bool) {
         let content = UNMutableNotificationContent()
-        content.title = "该休息一下啦 👀"
-        content.body = "请看向远处，放松眼睛，缓解疲劳。"
+        content.title = L10n.text("Time for a break 👀")
+        content.body = L10n.text("Look into the distance and relax your eyes to ease fatigue.")
         content.sound = soundEnabled ? .default : nil
 
         let request = UNNotificationRequest(

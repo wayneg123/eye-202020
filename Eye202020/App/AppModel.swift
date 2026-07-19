@@ -19,7 +19,7 @@ final class AppModel: ObservableObject {
 
     @Published private(set) var settings: ReminderSettings
     @Published private(set) var phase: ReminderPhase
-    @Published private(set) var now: Date
+    private(set) var now: Date
     @Published private(set) var statisticsRevision = 0
     @Published private(set) var notificationPermission: NotificationPermission = .unknown
     @Published var presentedError: String?
@@ -139,14 +139,14 @@ final class AppModel: ObservableObject {
 
     var todayFocusDuration: String {
         let totalMinutes = today.focusSeconds / 60
-        return "\(totalMinutes / 60)h \(totalMinutes % 60)m"
+        return L10n.format("%1$dh %2$dm", totalMinutes / 60, totalMinutes % 60)
     }
 
     var notificationPermissionLabel: String {
         switch notificationPermission {
-        case .unknown: return "正在检查"
-        case .enabled: return "已允许"
-        case .denied: return "未允许（仍会显示休息窗口）"
+        case .unknown: return L10n.text("Checking")
+        case .enabled: return L10n.text("Allowed")
+        case .denied: return L10n.text("Not allowed (the break window will still appear)")
         }
     }
 
@@ -221,7 +221,7 @@ final class AppModel: ObservableObject {
             settingsStore.save(settings)
         } catch {
             settings.launchAtLogin = launchAtLoginService.isEnabled
-            presentedError = "无法更新开机启动设置：\(error.localizedDescription)"
+            presentedError = L10n.format("Unable to update launch at login: %@", error.localizedDescription)
         }
     }
 
@@ -231,7 +231,7 @@ final class AppModel: ObservableObject {
         do {
             try launchAtLoginService.setEnabled(defaults.launchAtLogin)
         } catch {
-            presentedError = "无法关闭开机启动：\(error.localizedDescription)"
+            presentedError = L10n.format("Unable to disable launch at login: %@", error.localizedDescription)
         }
 
         settings = defaults

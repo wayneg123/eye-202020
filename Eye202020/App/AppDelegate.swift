@@ -59,7 +59,11 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
 
     init(model: AppModel) {
         self.model = model
-        let rootView = RestView().environmentObject(model)
+        let localization = LocalizationManager.shared
+        let rootView = RestView()
+            .environmentObject(model)
+            .environmentObject(localization)
+            .environment(\.locale, localization.locale)
         let panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 640, height: 420),
             styleMask: [.titled, .closable, .fullSizeContentView],
@@ -67,7 +71,7 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
         panel.contentView = NSHostingView(rootView: rootView)
-        panel.title = "休息一下"
+        panel.title = L10n.text("Take a break")
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isMovableByWindowBackground = true

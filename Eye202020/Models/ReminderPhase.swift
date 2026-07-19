@@ -19,9 +19,9 @@ enum ReminderPhase: Codable, Equatable {
 
     var title: String {
         switch self {
-        case .focusing: return "下次休息"
-        case .resting: return "正在休息"
-        case .snoozed: return "稍后提醒"
+        case .focusing: return L10n.text("Next break")
+        case .resting: return L10n.text("Taking a break")
+        case .snoozed: return L10n.text("Reminder snoozed")
         }
     }
 }

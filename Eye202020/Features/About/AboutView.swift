@@ -9,15 +9,15 @@ struct AboutView: View {
                 VStack(spacing: 7) {
                     Text("EyeBreak 20-20-20")
                         .font(.system(size: 27, weight: .bold))
-                    Text("版本 1.0.0")
+                    Text(L10n.text("Version 1.0.0"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("关于 20-20-20 法则")
+                    Text(L10n.text("About the 20-20-20 rule"))
                         .font(.headline)
-                    Text("长时间使用屏幕后，定期看向远处并短暂放松，有助于养成更健康的用眼节奏。本应用负责温和地提醒你，但不能替代专业医疗建议。")
+                    Text(L10n.text("After extended screen use, regularly looking into the distance and briefly relaxing can help you build healthier eye-care habits. This app provides gentle reminders, but it is not a substitute for professional medical advice."))
                         .foregroundStyle(.secondary)
                         .lineSpacing(5)
                 }
@@ -25,17 +25,17 @@ struct AboutView: View {
                 .eyeCard()
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("隐私优先", systemImage: "lock.shield.fill")
+                    Label(L10n.text("Privacy first"), systemImage: "lock.shield.fill")
                         .font(.headline)
                         .foregroundStyle(Color.eyeGreenDark)
-                    Text("设置和统计只保存在这台 Mac 上。应用不需要账号，不上传使用记录，也不包含分析或广告 SDK。")
+                    Text(L10n.text("Settings and statistics stay on this Mac. The app requires no account, uploads no usage records, and includes no analytics or advertising SDKs."))
                         .foregroundStyle(.secondary)
                         .lineSpacing(5)
                 }
                 .padding(20)
                 .eyeCard()
 
-                Text("愿每一次抬头，都能看见更远的风景。")
+                Text(L10n.text("May every glance up reveal a wider view."))
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
