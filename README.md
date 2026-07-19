@@ -2,7 +2,7 @@
 
 EyeBreak 20-20-20 is a native macOS eye-care reminder that helps people follow the 20-20-20 rule: after 20 minutes of screen work, look at something 20 feet (about 6 meters) away for 20 seconds.
 
-The app is available in English and Simplified Chinese. English is the default language, and the interface follows the preferred language configured in macOS.
+The app is available in English and Simplified Chinese. English is the default language; users can switch instantly with the in-app `中/En` control, and their choice is saved locally.
 
 ## Features
 
@@ -25,7 +25,13 @@ EyeBreak counts down each focus interval from the macOS menu bar and reminds the
 
 ## How we built it
 
-We built the app entirely with native Apple technologies. SwiftUI powers the main window, menu bar extra, settings, statistics dashboard, and break experience. AppKit provides the floating `NSPanel` and system lifecycle integration. UserNotifications delivers reminders, ServiceManagement handles launch at login, and Swift Charts visualizes recent activity. A small reminder state machine controls focus, rest, and snoozed phases, while `UserDefaults` stores settings, active state, and daily statistics. Apple localization resources provide English and Simplified Chinese throughout the interface.
+We built the app entirely with native Apple technologies, with Codex and GPT-5.6 supporting the engineering workflow. SwiftUI powers the main window, menu bar extra, settings, statistics dashboard, and break experience. AppKit provides the floating `NSPanel` and system lifecycle integration. UserNotifications delivers reminders, ServiceManagement handles launch at login, and Swift Charts visualizes recent activity. A small reminder state machine controls focus, rest, and snoozed phases, while `UserDefaults` stores settings, active state, daily statistics, and the selected language. Apple localization resources provide English and Simplified Chinese throughout the interface.
+
+## How Codex & GPT-5.6 were used
+
+We used OpenAI Codex with GPT-5.6 as an agentic engineering partner throughout the project rather than only as a code-completion tool. Codex explored the Swift codebase and its dependency graph, translated product requirements into scoped edits, created the bilingual localization architecture, updated every user-facing surface, built the Xcode project, ran the XCTest suite, and verified the final application bundle.
+
+GPT-5.6's reasoning was especially valuable during debugging. It connected runtime sampling evidence to SwiftUI's rendering behavior, traced repeated layout work to a globally published one-second clock and a recurring progress-ring animation, and helped redesign updates around small `TimelineView` subtrees. We validated the result empirically: idle CPU usage fell from roughly 24% to below 1% while the countdown remained accurate. Human direction and review defined the product decisions, copy, visual experience, and acceptance criteria; Codex and GPT-5.6 accelerated implementation, diagnosis, documentation, and verification.
 
 ## Challenges we ran into
 
@@ -56,6 +62,8 @@ Next, we would like to add richer scheduling controls, optional pause modes for 
 - macOS 14+
 - XCTest
 - Apple String Resources (`Localizable.strings`)
+- OpenAI Codex for agentic code exploration, implementation, debugging, and validation
+- GPT-5.6 for software-engineering reasoning and documentation support
 - OpenAI image generation for the original break-window landscape asset
 
 EyeBreak uses no cloud service, external database, third-party API, analytics SDK, or advertising SDK.
