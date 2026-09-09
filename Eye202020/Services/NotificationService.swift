@@ -25,10 +25,10 @@ final class NotificationService: NSObject, ReminderNotificationServing, UNUserNo
     }
 
     func sendRestReminder(soundEnabled: Bool) {
+        guard soundEnabled else { return }
+        // The nonactivating panel provides the visual reminder; avoid a second banner.
         let content = UNMutableNotificationContent()
-        content.title = L10n.text("Time for a break 👀")
-        content.body = L10n.text("Look into the distance and relax your eyes to ease fatigue.")
-        content.sound = soundEnabled ? .default : nil
+        content.sound = .default
 
         let request = UNNotificationRequest(
             identifier: "eye-rest-\(UUID().uuidString)",
@@ -42,7 +42,7 @@ final class NotificationService: NSObject, ReminderNotificationServing, UNUserNo
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        [.banner, .sound]
+        [.sound]
     }
 
     nonisolated func userNotificationCenter(

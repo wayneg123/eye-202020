@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import UserNotifications
 import XCTest
@@ -5,6 +6,59 @@ import XCTest
 
 @MainActor
 final class AppModelTests: XCTestCase {
+    func testBannerPositionUsesVisibleScreenFrame() {
+        let size = NSSize(width: 360, height: 156)
+        XCTAssertEqual(
+            RestWindowController.origin(for: size, in: NSRect(x: 0, y: 80, width: 1440, height: 795)),
+            NSPoint(x: 1064, y: 703)
+        )
+        XCTAssertEqual(
+            RestWindowController.origin(for: size, in: NSRect(x: -1920, y: 0, width: 1920, height: 1055)),
+            NSPoint(x: -376, y: 883)
+        )
+    }
+
+    func testBannerDoesNotTakeFocusAndHidesWithoutEndingLongBreak() async throws {
+        let suiteName = "Eye202020Tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let model = AppModel(
+            settingsStore: SettingsStore(defaults: defaults),
+            activeStateStore: ActiveStateStore(defaults: defaults),
+            statisticsStore: StatisticsStore(defaults: defaults),
+            notificationService: StubNotificationService(),
+            launchAtLoginService: StubLaunchAtLoginService()
+        )
+        model.updateSettings { $0.restSeconds = 120 }
+        model.startRestNow()
+        let phase = model.phase
+        let controller = RestWindowController(model: model)
+        defer { controller.closeProgrammatically() }
+        let panel = try XCTUnwrap(controller.window as? NSPanel)
+        XCTAssertFalse(panel.canBecomeKey)
+        XCTAssertFalse(panel.canBecomeMain)
+        XCTAssertTrue(panel.styleMask.contains(.nonactivatingPanel))
+        XCTAssertFalse(panel.hidesOnDeactivate)
+        let frontmostApplication = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        controller.showWindow(nil)
+        XCTAssertTrue(panel.isVisible)
+        XCTAssertFalse(panel.isKeyWindow)
+        XCTAssertEqual(NSWorkspace.shared.frontmostApplication?.processIdentifier, frontmostApplication)
+        let contentView = try XCTUnwrap(panel.contentView)
+        contentView.layoutSubtreeIfNeeded()
+        let bitmap = try XCTUnwrap(contentView.bitmapImageRepForCachingDisplay(in: contentView.bounds))
+        contentView.cacheDisplay(in: contentView.bounds, to: bitmap)
+        let image = try XCTUnwrap(NSImage(data: try XCTUnwrap(bitmap.tiffRepresentation)))
+        let attachment = XCTAttachment(image: image)
+        attachment.name = "Top-right reminder"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        try await Task.sleep(for: .seconds(21))
+        XCTAssertFalse(panel.isVisible)
+        XCTAssertEqual(model.phase, phase)
+        XCTAssertEqual(model.today.skipped, 0)
+    }
+
     func testTimerTransitionsUpdateStatisticsAndSendOneNotification() {
         let suiteName = "Eye202020Tests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!

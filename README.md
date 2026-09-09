@@ -7,7 +7,7 @@ Available in English (default) and Simplified Chinese. Switch anytime with the i
 ## Features
 
 - Menu bar countdown plus a full dashboard window
-- System notifications and a floating break panel that shows across Spaces
+- A nonactivating top-right reminder that shows across Spaces, hides after 20 seconds (or when the break ends), and never steals keyboard focus
 - Custom work duration, viewing distance, and break length
 - Five-minute snooze, end-early, and skip
 - Daily summary, seven-day trends, and completion streaks
@@ -26,7 +26,7 @@ The useful part of GPT-5.6 was debugging, not boilerplate. Idle CPU was stuck ar
 - macOS 14 or later
 - Full Xcode (Command Line Tools alone cannot build the `.app`)
 
-Open `Eye202020.xcodeproj`, select the `Eye202020` scheme, press `⌘R`. Notification permission is requested on first launch; the break window still works if notifications are denied.
+Open `Eye202020.xcodeproj`, select the `Eye202020` scheme, press `⌘R`. Notification permission is requested for optional reminder sounds; the top-right reminder still works if notifications are denied. Longer custom breaks continue after the reminder hides. Closing the reminder ends the break early; the clock button snoozes it for five minutes.
 
 ## Testing
 

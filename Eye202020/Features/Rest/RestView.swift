@@ -5,95 +5,67 @@ struct RestView: View {
     @EnvironmentObject private var localization: LocalizationManager
 
     var body: some View {
-        ZStack {
+        HStack(alignment: .top, spacing: 12) {
             Image("RestLandscape")
                 .resizable()
                 .scaledToFill()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
+                .frame(width: 48, height: 48)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.18),
-                    Color.white.opacity(0.52),
-                    Color.white.opacity(0.12)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-
-            VStack(spacing: 0) {
-                HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: 8) {
+                    Text(L10n.text("Take a break and relax your eyes"))
+                        .font(.system(size: 14, weight: .semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
                     Button {
                         model.endRestEarly()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .frame(width: 27, height: 27)
-                            .background(.ultraThinMaterial, in: Circle())
+                            .font(.system(size: 11, weight: .semibold))
+                            .frame(width: 22, height: 22)
                     }
                     .buttonStyle(.plain)
                     .help(L10n.text("End early"))
-
-                    Spacer()
+                    .accessibilityLabel(L10n.text("End early"))
                 }
-                .padding(16)
 
-                Spacer()
+                Text(L10n.format(
+                    "Look at something at least %1$d feet (about %2$.1f meters) away",
+                    model.settings.lookDistanceFeet,
+                    model.settings.lookDistanceMeters
+                ))
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
-                VStack(spacing: 10) {
-                    ZStack {
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                        Image(systemName: "eye.slash")
-                            .font(.system(size: 34, weight: .medium))
+                HStack {
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        Text("\(max(0, Int(ceil(model.phase.deadline.timeIntervalSince(context.date))))) \(L10n.text("seconds"))")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .monospacedDigit()
                     }
-                    .frame(width: 82, height: 82)
-
-                    Text(L10n.text("Take a break and relax your eyes"))
-                        .font(.system(size: 23, weight: .semibold))
-                    Text(L10n.format(
-                        "Look at something at least %1$d feet (about %2$.1f meters) away",
-                        model.settings.lookDistanceFeet,
-                        model.settings.lookDistanceMeters
-                    ))
-                        .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
-
-                    TimelineView(.periodic(from: .now, by: 1)) { _ in
-                        HStack(alignment: .firstTextBaseline, spacing: 6) {
-                            Text("\(model.remainingSeconds)")
-                                .font(.system(size: 44, weight: .semibold, design: .rounded))
-                                .monospacedDigit()
-                            Text(L10n.text("seconds"))
-                                .font(.subheadline.weight(.medium))
-                        }
+                    Spacer(minLength: 8)
+                    Button {
+                        model.snoozeRest()
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.system(size: 15))
+                            .frame(width: 26, height: 26)
                     }
-                    .padding(.top, 5)
-
-                    HStack(spacing: 12) {
-                        Button(L10n.text("Remind me in 5 minutes")) {
-                            model.snoozeRest()
-                        }
-                        .buttonStyle(.bordered)
-
-                        Button(L10n.text("End early")) {
-                            model.endRestEarly()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.white.opacity(0.92))
-                        .foregroundStyle(.primary)
-                    }
+                    .buttonStyle(.plain)
+                    .help(L10n.text("Remind me in 5 minutes"))
+                    .accessibilityLabel(L10n.text("Remind me in 5 minutes"))
                 }
-                .padding(.horizontal, 35)
-                .padding(.vertical, 24)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .padding(.bottom, 28)
-
-                Spacer(minLength: 8)
             }
         }
-        .frame(width: 640, height: 420)
+        .padding(16)
+        .frame(width: 360, height: 156, alignment: .topLeading)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(.primary.opacity(0.1))
+        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(L10n.text("Eye break countdown"))
         .environment(\.locale, localization.locale)

@@ -42,7 +42,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showRestWindow(for model: AppModel) {
         if let restWindowController {
             restWindowController.showWindow(nil)
-            restWindowController.window?.makeKeyAndOrderFront(nil)
             return
         }
 
@@ -53,9 +52,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 @MainActor
-private final class RestWindowController: NSWindowController, NSWindowDelegate {
+final class RestWindowController: NSWindowController, NSWindowDelegate {
     private weak var model: AppModel?
     private var isProgrammaticClose = false
+    private var dismissalTask: Task<Void, Never>?
 
     init(model: AppModel) {
         self.model = model
@@ -64,9 +64,9 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
             .environmentObject(model)
             .environmentObject(localization)
             .environment(\.locale, localization.locale)
-        let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 640, height: 420),
-            styleMask: [.titled, .closable, .fullSizeContentView],
+        let panel = RestNotificationPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 156),
+            styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
@@ -74,14 +74,16 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
         panel.title = L10n.text("Take a break")
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
-        panel.isMovableByWindowBackground = true
+        panel.isMovableByWindowBackground = false
+        panel.hidesOnDeactivate = false
+        panel.becomesKeyOnlyIfNeeded = true
+        panel.isReleasedWhenClosed = false
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.backgroundColor = .clear
         panel.isOpaque = false
         panel.hasShadow = true
-        panel.center()
 
         super.init(window: panel)
         panel.delegate = self
@@ -92,14 +94,37 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
     }
 
     override func showWindow(_ sender: Any?) {
-        super.showWindow(sender)
-        window?.center()
-        window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        guard let window else { return }
+        let screen = NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) }
+            ?? NSScreen.main
+        if let screen {
+            window.setFrameOrigin(Self.origin(for: window.frame.size, in: screen.visibleFrame))
+        }
+        window.orderFrontRegardless()
+        guard dismissalTask == nil else { return }
+        // Hiding the banner must not end a longer, user-configured break.
+        dismissalTask = Task { @MainActor [weak self] in
+            do {
+                try await Task.sleep(for: .seconds(20))
+            } catch {
+                return
+            }
+            self?.window?.orderOut(nil)
+            self?.dismissalTask = nil
+        }
+    }
+
+    static func origin(for size: NSSize, in visibleFrame: NSRect) -> NSPoint {
+        NSPoint(
+            x: max(visibleFrame.minX, visibleFrame.maxX - size.width - 16),
+            y: max(visibleFrame.minY, visibleFrame.maxY - size.height - 16)
+        )
     }
 
     func closeProgrammatically() {
         isProgrammaticClose = true
+        dismissalTask?.cancel()
+        dismissalTask = nil
         close()
     }
 
@@ -108,4 +133,9 @@ private final class RestWindowController: NSWindowController, NSWindowDelegate {
             model?.endRestEarly()
         }
     }
+}
+
+private final class RestNotificationPanel: NSPanel {
+    override var canBecomeKey: Bool { false }
+    override var canBecomeMain: Bool { false }
 }

@@ -38,7 +38,7 @@
 "May every glance up reveal a wider view." = "愿每一次抬头，都能看见更远的风景。";
 "Minimum suggested distance to look at during a break" = "提醒时建议眺望的最短距离";
 "Next break" = "下次休息";
-"Not allowed (the break window will still appear)" = "未允许（仍会显示休息窗口）";
+"Not allowed (the break window will still appear)" = "未允许提示音（仍会显示右上角提醒）";
 "Notification sound" = "通知声音";
 "OK" = "好";
 "Open app" = "打开应用";
